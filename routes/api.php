@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\v1\Brasileirao\ApiBrasileiraoController;
+use App\Http\Controllers\Api\v2\ChampionshipController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// API v2 - Generic Architecture
+Route::prefix("v2")->group(function () {
+    Route::prefix("championships")->group(function () {
+        Route::get("{slug}/standings/{year}", [ChampionshipController::class, 'standings']);
+        Route::post("{slug}/update", [ChampionshipController::class, 'update']);
+        // Future: matches, details, etc.
+    });
+});
+
+// API v1 - Legacy Brasileirao
 Route::namespace("v1")->prefix("campeonato")->group(function () {
     Route::namespace("brasileirao")->prefix("brasileiro")->group(function () {
         Route::prefix("tabela")->group(function () {

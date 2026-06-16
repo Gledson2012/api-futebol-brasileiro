@@ -8,6 +8,8 @@ use App\Repositories\BrasileiraoRepository;
 use App\Repositories\Contracts\BrasileiraoJogosDetalhesRepositoryInterface;
 use App\Repositories\Contracts\BrasileiraoJogosRepositoryInterface;
 use App\Repositories\Contracts\BrasileiraoRepositoryInterface;
+use App\Repositories\Contracts\ChampionshipRepositoryInterface;
+use App\Repositories\ChampionshipRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -19,6 +21,9 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        /** Championship Repository v2 */
+        $this->app->bind(ChampionshipRepositoryInterface::class, ChampionshipRepository::class);
+
         /** Brasileirao Repository */
         $this->app->bind(BrasileiraoRepositoryInterface::class, BrasileiraoRepository::class);
 
