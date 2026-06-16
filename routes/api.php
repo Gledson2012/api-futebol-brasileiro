@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 // API v2 - Generic Architecture
 Route::prefix("v2")->group(function () {
     Route::prefix("championships")->group(function () {
+        Route::get("/", [ChampionshipController::class, 'index']);
         Route::get("{slug}/standings/{year}", [ChampionshipController::class, 'standings']);
         Route::post("{slug}/update", [ChampionshipController::class, 'update']);
         // Future: matches, details, etc.

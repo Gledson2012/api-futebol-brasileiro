@@ -1,137 +1,70 @@
-# API FUTEBOL BRASILEIRO ⚽
+# API Futebol Brasileiro e Mundial ⚽
 
-Projeto que está sendo desenvolvida a fim de buscar conhecimento e disponibilizar uma ferramenta API para consulta da tabela e rodadas do Campeonato Brasileiro, Libertadores, Suldamericana e Copa do Brasil.
+Este projeto disponibiliza uma *API* robusta para consulta de tabelas, rodadas e estatísticas de campeonatos nacionais e internacionais. Além do suporte ao Campeonato Brasileiro, o sistema conta com uma arquitetura moderna (v2) que abrange ligas globais como a *Premier League*, *Champions League* e a Copa do Mundo.
 
-Nesse projeto está sendo utilizado o framework [Laravel 8](https://laravel.com/docs/8.x) com [PHP 8](https://www.php.net/releases/8.0).
+O sistema utiliza o *framework* [Laravel 8](https://laravel.com/docs/8.x) com [PHP 8](https://www.php.net/releases/8.0).
 
-## Instalação
+## 🚀 Novidades da Versão 2
+- **Arquitetura Multicampeonatos:** Suporte nativo para qualquer liga do mundo via sistema de *Scrapers*.
+- **Banco de Dados Normalizado:** Estrutura genérica para gerir temporadas, equipas e jogos.
+- **Aplicativo Android Nativo:** Projeto base em *Kotlin* (*Jetpack Compose*) pronto para consumir a *API*.
+
+## 🛠️ Instalação Rápida (Linux/Arch)
+
+Para facilitar a configuração do ambiente (drivers *PHP*, Banco de Dados e tabelas), utilize o *script* automatizado:
 
 ```bash
-# Após clonar o repositório, execute esta linha de comando abaixo
+chmod +x instalar.sh
+./instalar.sh
+```
+
+### Instalação Manual
+
+```bash
+# Instala as dependências
 $ composer install
 
-# Criar arquivo .env do projeto
+# Configura o ambiente
 $ cp .env.example .env
-
-# Gerar chave do laravel
 $ php artisan key:generate
-```
 
-## Configuração de conexão com banco de dados
-
-Escolha o SGBD de sua preferência e configure as credenciais de acordo com as variáveis do arquivo .env 
-
-```bash
-# Conexão Banco de Dados
-DB_CONNECTION=
-DB_HOST=
-DB_PORT=
-DB_DATABASE=
-DB_USERNAME=
-DB_PASSWORD=
-```
-
-## Realizar migração das tabelas no banco de dados
-
-Após finalizar a configuração de conexão com banco de dados, realize a migração das tabelas.
-
-```bash
+# Cria as tabelas e popula os campeonatos mundiais
 $ php artisan migrate
+$ php artisan db:seed --class=ChampionshipSeeder
 ```
 
-## Alimentar as tabelas do banco de dados de acordo com as informações dos campeonatos atualmente
+## 📡 API v2 (Endpoints Genéricos)
 
-Agora vamos trazer as informações dos campeonatos para o nosso banco de dados.
-
-```bash
-# Atualiza a tabela do campeonato brasileiro em nossa base de dados.
-$ php artisan atualiza:tabela-brasileirao
-
-# Atualiza os jogos do campeonato brasileiro em nossa base de dados.
-$ php artisan atualiza:jogos-brasileirao
-
-# Salva os detalhes dos jogos em estatísticas do campeonato brasileiro em nossa base de dados.
-$ php artisan salva-detalhes:jogos-brasileirao
-```
-
-Adicionando a lista de comandos em CRON, consulte os horários que os comandos serão executados no arquivo do seu projeto app/Console/Kernel.php.
-
-```bash
-# Vamos abrir o gerenciador de CRON do linux.
-$ crontab -e
-
-# Na última linha adicione o comando abaixo onde */projects/bot-blaze* seja o valor do path onde seu projeto está.
-* * * * * cd /projects/bot-blaze && php artisan schedule:run >> /dev/null 2>&1
-```
-
-Banco de dados atualizado com as informações das maiores competições que envolvem os times brasileiros, vamos consultar via requisição.
-
-Caso esteja utilizando o sistema localmente, execute o comando abaixo.
-
-```bash
-$ php artisan serve
-```
-
-Considerando a URL padrão da API o valor de (http://127.0.0.1:8000/api/)
+A nova versão da *API* utiliza *endpoints* dinâmicos baseados no *slug* do campeonato.
 
 | Método | URL | Descrição |
-| --- | --- | --- |
-| GET | ```urlApi```/campeonato/brasileiro/tabela | Retorna a tabela do campeonato brasileiro. |
-| GET | ```urlApi```/campeonato/brasileiro/tabela-por-rodada/{rodada}/{temporada} | Retorna a tabela do campeonato brasileiro por rodada e temporada. |
-| GET | ```urlApi```/campeonato/brasileiro/jogos | Retorna os jogos do campeonato brasileiro da rodada atual. |
-| GET | ```urlApi```/campeonato/brasileiro/jogos-por-rodada/{rodada}/{temporada} | Retorna os jogos do campeonato brasileiro por rodada e temporada. |
-| GET | ```urlApi```/campeonato/brasileiro/jogos-por-time/{nomeTime} | Retorna os jogos do campeonato brasileiro por nome do time. |
-| GET | ```urlApi```/campeonato/brasileiro/detalhes/{timesJogo}/{idReferencia} | Retorna as estatísticas dos jogos do campeonato brasileiro por referência de jogo. |
+| :--- | :--- | :--- |
+| GET | `/api/v2/championships` | Lista todos os campeonatos disponíveis. |
+| GET | `/api/v2/championships/{slug}/standings/{ano}` | Retorna a classificação de um campeonato específico. |
+| POST | `/api/v2/championships/{slug}/update` | Força a atualização dos dados (*Scraping*). |
 
-#### Exemplo de objeto retornado na consulta da tabela do campeonato brasileiro.
+**Exemplos de *Slugs*:** `brasileirao`, `premier-league`, `champions-league`, `world-cup`, `la-liga`.
 
-```code
-[
-  {
-    "id_time": 798,
-    "posicao": 1,
-    "icone_width": 19,
-    "icone_height": 19,
-    "icone_url": "https://p2.trrsf.com/image/fget/cf/51/51/s1.trrsf.com/musa/pro/5vcvvctt97r69pfi89v8th577m.png",
-    "nome_time": "Corinthians",
-    "pontos": 22,
-    "jogos": 12,
-    "vitorias": 6,
-    "empates": 4,
-    "derrotas": 2,
-    "gols_pro": 16,
-    "gols_contra": 10,
-    "saldo_de_gols": 6,
-    "aproveitamento": 61
-  },
-]
+## 📱 Aplicativo Android
+
+O projeto inclui o código base para um aplicativo *Android* desenvolvido em *Kotlin* com *Jetpack Compose*. 
+O *app* conta com:
+- **Tema Dinâmico:** Cores que se adaptam conforme o campeonato selecionado.
+- **Navegação Fluida:** Entre a lista de campeonatos e a tabela de classificação.
+- **Consumo de API:** Integração com *Retrofit* e carregamento de imagens com *Coil*.
+
+## ⚙️ Configuração de Banco de Dados
+
+Configure as credenciais conforme as variáveis do arquivo `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=api_futebol
+DB_USERNAME=api_futebol
+DB_PASSWORD=futebol123
 ```
 
-#### Exemplo de objeto retornado na consulta de um jogo do campeonato brasileiro.
-
-```code
-[
-  {
-    "rodada": 13,
-    "times_partida": "Corinthians x Goiás",
-    "data_do_jogo": "2022-06-19",
-    "local_jogo": "Neo Química Arena",
-    "time_casa": "Corinthians",
-    "time_casa_logo_width": 24,
-    "time_casa_logo_height": 24,
-    "time_casa_logo_alt": "Corinthians",
-    "time_casa_logo_url": "https://p2.trrsf.com/image/fget/cf/51/51/s1.trrsf.com/musa/pro/5vcvvctt97r69pfi89v8th577m.png",
-    "time_casa_abreviacao": "COR",
-    "time_casa_gols": 1,
-    "time_visitante_gols": 0,
-    "data_e_horario_do_jogo": "Dom 19/06 16h00",
-    "referencia_do_jogo": "corinthians-x-goias/72501",
-    "time_visitante": "Goiás",
-    "time_visitante_logo_width": 24,
-    "time_visitante_logo_height": 24,
-    "time_visitante_logo_alt": "Goiás",
-    "time_visitante_logo_url": "https://p2.trrsf.com/image/fget/cf/51/51/s1.trrsf.com/musa/pro/1l1fquu71jjbfck687qvikc3l.png",
-    "time_visitante_abreviacao": "GOI"
-  },
-]
-```
+---
+*Este projeto é desenvolvido com foco em performance e escalabilidade para entusiastas de dados esportivos.*

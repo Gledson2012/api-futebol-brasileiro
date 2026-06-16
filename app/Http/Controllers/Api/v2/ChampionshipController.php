@@ -17,6 +17,16 @@ class ChampionshipController extends Controller
         $this->service = $service;
     }
 
+    public function index()
+    {
+        try {
+            $championships = \App\Models\Championship::all();
+            return ReturnResponse::success("Campeonatos retornados com sucesso.", $championships);
+        } catch (Exception $e) {
+            return ReturnResponse::error("Erro ao retornar campeonatos.", [$e->getMessage()]);
+        }
+    }
+
     public function standings(string $slug, int $year)
     {
         try {
@@ -31,12 +41,13 @@ class ChampionshipController extends Controller
     {
         try {
             $year = $request->input('year', date('Y'));
-            // No mundo real, a URL viria de uma config ou banco, 
-            // mas para facilitar o teste permitimos passar via request
-            $url = $request->input('url', env('URL_SITE_BRASILEIRAO')); 
+            
+            // Mapeia o slug para a variável de ambiente correspondente
+            $envVar = 'URL_' . strtoupper(str_replace('-', '_', $slug));
+            $url = $request->input('url', env($envVar, env('URL_SITE_BRASILEIRAO'))); 
 
             $this->service->updateStandings($slug, $year, $url);
-            return ReturnResponse::success("Dados atualizados com sucesso.");
+            return ReturnResponse::success("Dados de {$slug} atualizados com sucesso.");
         } catch (Exception $e) {
             return ReturnResponse::error("Erro ao atualizar dados.", [$e->getMessage()]);
         }
