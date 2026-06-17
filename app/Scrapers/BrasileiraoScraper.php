@@ -103,7 +103,7 @@ class BrasileiraoScraper extends BaseScraper implements ScraperInterface
 
     private function parseTeam(string $info_time): array
     {
-        $dados_time    = explode('"', $info_time);
+        $dados_equipa    = explode('"', $info_time);
         $array_replace = [">", "<", "/", "tr", "td", "class", "=", " ", "title", '"'];
 
         $data = [

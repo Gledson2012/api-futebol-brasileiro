@@ -65,7 +65,7 @@ class BrasileiraoJogosRepository implements BrasileiraoJogosRepositoryInterface
     }
 
     /**
-     * Recupera os jogos de um time pelo campeonato brasileiro.
+     * Recupera os jogos de um equipa pelo campeonato brasileiro.
      *
      * @param String $nome_time
      * @param String $temporada
@@ -80,7 +80,7 @@ class BrasileiraoJogosRepository implements BrasileiraoJogosRepositoryInterface
             ->get()
             ->map(function($dados) use ($nome_time) {
                 $dados->jogos = collect(json_decode($dados->jogos));
-                $dados->jogos = $dados->jogos->where("time_casa", $nome_time)->first() ?? $dados->jogos->where("time_visitante", $nome_time)->first();
+                $dados->jogos = $dados->jogos->where("equipa_casa", $nome_time)->first() ?? $dados->jogos->where("equipa_visitante", $nome_time)->first();
                 $dados->jogos = json_encode($dados->jogos);
 
                 return $dados;

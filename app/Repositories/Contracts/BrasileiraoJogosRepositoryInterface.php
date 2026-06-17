@@ -33,7 +33,7 @@ interface BrasileiraoJogosRepositoryInterface
     public function jogosPorRodada(int $rodada, string $temporada);
 
     /**
-     * Recupera os jogos de um time pelo campeonato brasileiro.
+     * Recupera os jogos de um equipa pelo campeonato brasileiro.
      *
      * @param String $nome_time
      * @param String $temporada

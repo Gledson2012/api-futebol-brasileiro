@@ -78,7 +78,7 @@ class SalvaDetalhesJogosBrasileirao extends Command
 
                     BrasileiraoJogosDetalhes::create($dados->toArray());
 
-                    $this->info("{$this->signature} | INFORMAÇÕES DO JOGO {$jogo->times_partida} SALVO EM NOSSA BASE DE DADOS.");
+                    $this->info("{$this->signature} | INFORMAÇÕES DO JOGO {$jogo->equipas_partida} SALVO EM NOSSA BASE DE DADOS.");
                 });
             });
 

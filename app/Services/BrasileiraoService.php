@@ -131,7 +131,7 @@ class BrasileiraoService
     }
 
     /**
-     * Retorna jogos da temporada do campeonato brasileiro por time.
+     * Retorna jogos da temporada do campeonato brasileiro por equipa.
      *
      * @param String $nome_time
      *
@@ -140,11 +140,11 @@ class BrasileiraoService
     public function jogosPorTime(string $nome_time) : JsonResponse
     {
         try {
-            $jogos_por_time = $this->brasileiraoJogosRepository->jogosPorTime(trim(ucfirst(strtolower($nome_time))), $this->temporada_atual);
+            $jogos_por_equipa = $this->brasileiraoJogosRepository->jogosPorTime(trim(ucfirst(strtolower($nome_time))), $this->temporada_atual);
 
-            if (empty($jogos_por_time)) throw new ValidacaoException("Nenhum registro encontrado.", 1);
+            if (empty($jogos_por_equipa)) throw new ValidacaoException("Nenhum registro encontrado.", 1);
 
-            return ReturnResponse::success("Jogos do Campeonato Brasileiro retornada com sucesso.", $jogos_por_time);
+            return ReturnResponse::success("Jogos do Campeonato Brasileiro retornada com sucesso.", $jogos_por_equipa);
         } catch (ValidacaoException $ve) {
             return ReturnResponse::warning($ve->getMessage());
         } catch (\Throwable $th) {

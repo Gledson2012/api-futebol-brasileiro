@@ -56,13 +56,13 @@ class UtilsAbstract
     }
 
     /**
-     * Organiza as informações do time na tabela em forma de array,
+     * Organiza as informações do equipa na tabela em forma de array,
      *
      * @param String $info_time
      *
      * @return Array
      */
-    public function time_static(string $info_time) : array
+    public function equipa_static(string $info_time) : array
     {
         $dados_time    = explode('"', $info_time);
         $array_replace = [">", "<", "/", "tr", "td", "class", "=", " ", "title", '"'];
@@ -105,25 +105,25 @@ class UtilsAbstract
 
         $data = [
             "rodada"                     => (int) $rodada,
-            "times_partida"              => trim($dados_jogo[3]),
+            "equipas_partida"              => trim($dados_jogo[3]),
             "data_do_jogo"               => trim($dados_jogo[7]),
             "local_jogo"                 => trim($dados_jogo[15]),
-            "time_casa"                  => trim($dados_jogo[29]),
-            "time_casa_logo_width"       => (int) trim($dados_jogo[31]),
-            "time_casa_logo_height"      => (int) trim($dados_jogo[33]),
-            "time_casa_logo_alt"         => trim($dados_jogo[37]),
-            "time_casa_logo_url"         => trim($dados_jogo[39]),
-            "time_casa_abreviacao"       => trim(str_replace($array_replace, "", $dados_jogo[42])),
-            "time_casa_gols"             => $jogo_concluido ? (int) trim(str_replace($array_replace, "", $dados_jogo[46])) : null,
-            "time_visitante_gols"        => $jogo_concluido ? (int) trim(str_replace($array_replace, "", $dados_jogo[50])) : null,
+            "equipa_casa"                  => trim($dados_jogo[29]),
+            "equipa_casa_logo_width"       => (int) trim($dados_jogo[31]),
+            "equipa_casa_logo_height"      => (int) trim($dados_jogo[33]),
+            "equipa_casa_logo_alt"         => trim($dados_jogo[37]),
+            "equipa_casa_logo_url"         => trim($dados_jogo[39]),
+            "equipa_casa_abreviacao"       => trim(str_replace($array_replace, "", $dados_jogo[42])),
+            "equipa_casa_gols"             => $jogo_concluido ? (int) trim(str_replace($array_replace, "", $dados_jogo[46])) : null,
+            "equipa_visitante_gols"        => $jogo_concluido ? (int) trim(str_replace($array_replace, "", $dados_jogo[50])) : null,
             "data_e_horario_do_jogo"     => trim(str_replace($replace_array, "", $dados_jogo[54])),
             "referencia_do_jogo"         => $jogo_concluido ? trim(collect(explode("/ao-vivo/", $dados_jogo[57]))->last()) : null,
-            "time_visitante"             => $jogo_concluido ? trim($dados_jogo[67]) : trim($dados_jogo[63]),
-            "time_visitante_logo_width"  => $jogo_concluido ? (int) trim($dados_jogo[69]) : trim($dados_jogo[65]),
-            "time_visitante_logo_height" => $jogo_concluido ? (int) trim($dados_jogo[71]) : trim($dados_jogo[67]),
-            "time_visitante_logo_alt"    => $jogo_concluido ? trim($dados_jogo[75]) : trim($dados_jogo[71]),
-            "time_visitante_logo_url"    => $jogo_concluido ? trim($dados_jogo[77]) : trim($dados_jogo[73]),
-            "time_visitante_abreviacao"  => $jogo_concluido ? trim(str_replace($array_replace, "", $dados_jogo[80])) : trim(str_replace($array_replace, "", $dados_jogo[76]))
+            "equipa_visitante"             => $jogo_concluido ? trim($dados_jogo[67]) : trim($dados_jogo[63]),
+            "equipa_visitante_logo_width"  => $jogo_concluido ? (int) trim($dados_jogo[69]) : trim($dados_jogo[65]),
+            "equipa_visitante_logo_height" => $jogo_concluido ? (int) trim($dados_jogo[71]) : trim($dados_jogo[67]),
+            "equipa_visitante_logo_alt"    => $jogo_concluido ? trim($dados_jogo[75]) : trim($dados_jogo[71]),
+            "equipa_visitante_logo_url"    => $jogo_concluido ? trim($dados_jogo[77]) : trim($dados_jogo[73]),
+            "equipa_visitante_abreviacao"  => $jogo_concluido ? trim(str_replace($array_replace, "", $dados_jogo[80])) : trim(str_replace($array_replace, "", $dados_jogo[76]))
         ];
 
         return array_map("html_entity_decode", $data);
@@ -148,10 +148,10 @@ class UtilsAbstract
         $data = [
             "nome_estadio"              => trim(str_replace($array_replace, "", $nome_estadio)),
             "data_hora_jogo"            => Carbon::createFromFormat("d/m/Y H:i:s", $data_hora_jogo)->format("Y-m-d H:i:s"),
-            "time_casa"                 => trim(str_replace($array_replace, "", $dados_info_jogo[10])),
-            "time_casa_gols"            => (int) trim(str_replace($array_replace, "", $dados_info_jogo[34])),
-            "time_visitante"            => trim(str_replace($array_replace, "", $dados_info_jogo[54])),
-            "time_visitante_gols"       => (int) trim(str_replace($array_replace, "", $dados_info_jogo[40]))
+            "equipa_casa"                 => trim(str_replace($array_replace, "", $dados_info_jogo[10])),
+            "equipa_casa_gols"            => (int) trim(str_replace($array_replace, "", $dados_info_jogo[34])),
+            "equipa_visitante"            => trim(str_replace($array_replace, "", $dados_info_jogo[54])),
+            "equipa_visitante_gols"       => (int) trim(str_replace($array_replace, "", $dados_info_jogo[40]))
         ];
 
         return array_map("html_entity_decode", $data);
@@ -161,51 +161,51 @@ class UtilsAbstract
      * Organiza as informações de cartões por tempo de jogo em forma de array.
      *
      * @param String $info_cartoes
-     * @param String $time_casa
-     * @param String $time_visitante
+     * @param String $equipa_casa
+     * @param String $equipa_visitante
      *
      * @return Array
      */
-    public function info_cartoes_static(string $info_cartoes, string $time_casa, string $time_visitante) : array
+    public function info_cartoes_static(string $info_cartoes, string $equipa_casa, string $equipa_visitante) : array
     {
-        $time_casa_cartoes_amarelos       = 0;
-        $time_casa_cartoes_vermelhos      = 0;
-        $time_visitante_cartoes_amarelos  = 0;
-        $time_visitante_cartoes_vermelhos = 0;
+        $equipa_casa_cartoes_amarelos       = 0;
+        $equipa_casa_cartoes_vermelhos      = 0;
+        $equipa_visitante_cartoes_amarelos  = 0;
+        $equipa_visitante_cartoes_vermelhos = 0;
 
         $dados_info_cartoes = explode("\n", $info_cartoes);
         $dados_info_cartoes = collect(array_filter(array_map("html_entity_decode", $dados_info_cartoes)));
 
-        $dados_info_cartoes->each(function ($dados) use ($time_casa, $time_visitante, &$time_casa_cartoes_amarelos, &$time_visitante_cartoes_amarelos, &$time_casa_cartoes_vermelhos, &$time_visitante_cartoes_vermelhos) {
+        $dados_info_cartoes->each(function ($dados) use ($equipa_casa, $equipa_visitante, &$equipa_casa_cartoes_amarelos, &$equipa_visitante_cartoes_amarelos, &$equipa_casa_cartoes_vermelhos, &$equipa_visitante_cartoes_vermelhos) {
             $dados = str_replace(['"', '>'], "", collect(explode('title="', $dados))->last());
 
             if (empty($dados)) return true;
 
             switch (true) {
                 case str_contains($dados, "cartão amarelo"):
-                    if (str_contains($dados, $time_casa)) $time_casa_cartoes_amarelos = $time_casa_cartoes_amarelos + 1;
-                    if (str_contains($dados, $time_visitante)) $time_visitante_cartoes_amarelos = $time_visitante_cartoes_amarelos + 1;
+                    if (str_contains($dados, $equipa_casa)) $equipa_casa_cartoes_amarelos = $equipa_casa_cartoes_amarelos + 1;
+                    if (str_contains($dados, $equipa_visitante)) $equipa_visitante_cartoes_amarelos = $equipa_visitante_cartoes_amarelos + 1;
                     break;
 
                 case str_contains($dados, "cartão vermelho"):
-                    if (str_contains($dados, $time_casa)) $time_casa_cartoes_vermelhos = $time_casa_cartoes_vermelhos + 1;
-                    if (str_contains($dados, $time_visitante)) $time_visitante_cartoes_vermelhos = $time_visitante_cartoes_vermelhos + 1;
+                    if (str_contains($dados, $equipa_casa)) $equipa_casa_cartoes_vermelhos = $equipa_casa_cartoes_vermelhos + 1;
+                    if (str_contains($dados, $equipa_visitante)) $equipa_visitante_cartoes_vermelhos = $equipa_visitante_cartoes_vermelhos + 1;
                     break;
             }
         });
 
         $data = [
-            "time_casa_cartoes_amarelos"       => (int) $time_casa_cartoes_amarelos,
-            "time_casa_cartoes_vermelhos"      => (int) $time_casa_cartoes_vermelhos,
-            "time_visitante_cartoes_amarelos"  => (int) $time_visitante_cartoes_amarelos,
-            "time_visitante_cartoes_vermelhos" => (int) $time_visitante_cartoes_vermelhos,
+            "equipa_casa_cartoes_amarelos"       => (int) $equipa_casa_cartoes_amarelos,
+            "equipa_casa_cartoes_vermelhos"      => (int) $equipa_casa_cartoes_vermelhos,
+            "equipa_visitante_cartoes_amarelos"  => (int) $equipa_visitante_cartoes_amarelos,
+            "equipa_visitante_cartoes_vermelhos" => (int) $equipa_visitante_cartoes_vermelhos,
         ];
 
         return $data;
     }
 
     /**
-     * Organiza as informações de escalações do times em forma de array.
+     * Organiza as informações de escalações do equipas em forma de array.
      *
      * @param String $escalacoes_info
      *
@@ -217,7 +217,7 @@ class UtilsAbstract
 
         $data_escalacao = [];
 
-        $categoria = "time_casa_titular";
+        $categoria = "equipa_casa_titular";
 
         $dados_escalacoes_info->each(function ($data, $key) use ($dados_escalacoes_info, &$categoria, &$data_escalacao) {
             switch (true) {
@@ -236,11 +236,11 @@ class UtilsAbstract
                 default:
                     switch (true) {
                         case str_contains($data, "live__content__lineup__col live__content__lineup__col-right"):
-                            $categoria = "time_visitante_titular";
+                            $categoria = "equipa_visitante_titular";
                             break;
 
                         case str_contains($data, "Banco"):
-                            $categoria = in_array($categoria, ["time_casa_titular"]) ? "time_casa_banco" : "time_visitante_banco";
+                            $categoria = in_array($categoria, ["equipa_casa_titular"]) ? "equipa_casa_banco" : "equipa_visitante_banco";
                             break;
                     }
                     break;
@@ -248,8 +248,8 @@ class UtilsAbstract
         });
 
         $data = [
-            "time_casa_escalacao"      => collect($data_escalacao)->only(["time_casa_titular", "time_casa_banco"])->toJson(),
-            "time_visitante_escalacao" => collect($data_escalacao)->only(["time_visitante_titular", "time_visitante_banco"])->toJson()
+            "equipa_casa_escalacao"      => collect($data_escalacao)->only(["equipa_casa_titular", "equipa_casa_banco"])->toJson(),
+            "equipa_visitante_escalacao" => collect($data_escalacao)->only(["equipa_visitante_titular", "equipa_visitante_banco"])->toJson()
         ];
 
         return $data;
@@ -259,28 +259,28 @@ class UtilsAbstract
      * Organiza as estatisticas do jogo em forma de array.
      *
      * @param String $data_estatistica
-     * @param String $time_casa
+     * @param String $equipa_casa
      *
      * @return Array
      */
-    public function estatisticas_static(string $data_estatistica, string $time_casa) : array
+    public function estatisticas_static(string $data_estatistica, string $equipa_casa) : array
     {
         $dados = json_decode($data_estatistica);
 
         $estatisticas = $dados->root->result->events[0];
 
-        $time_a_estatistica = self::organizaEstatisticas($estatisticas->statistics[0]);
-        $time_b_estatistica = self::organizaEstatisticas($estatisticas->statistics[1]);
+        $equipa_a_estatistica = self::organizaEstatisticas($estatisticas->statistics[0]);
+        $equipa_b_estatistica = self::organizaEstatisticas($estatisticas->statistics[1]);
 
         $estatisticas = [
-            "time_casa"      => in_array($time_casa, [$time_a_estatistica["nome_time"]]) ? $time_a_estatistica : $time_b_estatistica,
-            "time_visitante" => !in_array($time_casa, [$time_a_estatistica["nome_time"]]) ? $time_a_estatistica : $time_b_estatistica
+            "equipa_casa"      => in_array($equipa_casa, [$equipa_a_estatistica["nome_time"]]) ? $equipa_a_estatistica : $equipa_b_estatistica,
+            "equipa_visitante" => !in_array($equipa_casa, [$equipa_a_estatistica["nome_time"]]) ? $equipa_a_estatistica : $equipa_b_estatistica
         ];
 
         $data = [
             "estatisticas"              => collect($estatisticas)->toJson(),
-            "time_casa_posse_bola"      => $estatisticas["time_casa"]["percentual_posse_de_bola"],
-            "time_visitante_posse_bola" => $estatisticas["time_visitante"]["percentual_posse_de_bola"]
+            "equipa_casa_posse_bola"      => $estatisticas["equipa_casa"]["percentual_posse_de_bola"],
+            "equipa_visitante_posse_bola" => $estatisticas["equipa_visitante"]["percentual_posse_de_bola"]
         ];
 
         return $data;

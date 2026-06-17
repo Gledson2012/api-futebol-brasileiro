@@ -23,7 +23,7 @@ class TabelaBrasileirao extends UtilsAbstract
         collect(explode("data-idteam", $dados_tabela))->each(function($dados_time, $key) use (&$tabela) {
             if (strlen($dados_time) < 10) return true;
 
-            $tabela = $tabela->merge([$this->time_static($dados_time)]);
+            $tabela = $tabela->merge([$this->equipa_static($dados_time)]);
         });
 
         return collect($tabela);

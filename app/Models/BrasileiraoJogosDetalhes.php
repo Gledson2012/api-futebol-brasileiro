@@ -26,19 +26,19 @@ class BrasileiraoJogosDetalhes extends Model
         "nome_estadio",
         "data_hora_jogo",
 
-        "time_casa",
-        "time_casa_gols",
-        "time_casa_posse_bola",
-        "time_casa_cartoes_amarelos",
-        "time_casa_cartoes_vermelhos",
-        "time_casa_escalacao",
+        "equipa_casa",
+        "equipa_casa_gols",
+        "equipa_casa_posse_bola",
+        "equipa_casa_cartoes_amarelos",
+        "equipa_casa_cartoes_vermelhos",
+        "equipa_casa_escalacao",
 
-        "time_visitante",
-        "time_visitante_gols",
-        "time_visitante_posse_bola",
-        "time_visitante_cartoes_amarelos",
-        "time_visitante_cartoes_vermelhos",
-        "time_visitante_escalacao",
+        "equipa_visitante",
+        "equipa_visitante_gols",
+        "equipa_visitante_posse_bola",
+        "equipa_visitante_cartoes_amarelos",
+        "equipa_visitante_cartoes_vermelhos",
+        "equipa_visitante_escalacao",
 
         "estatisticas"
     ];

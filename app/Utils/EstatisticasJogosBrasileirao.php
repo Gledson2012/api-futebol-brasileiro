@@ -44,14 +44,14 @@ class EstatisticasJogosBrasileirao extends UtilsAbstract
 
         $info_cartoes_1_tempo->map(function ($dados_cartoes, $key) use (&$info_cartoes_1_tempo, $info_jogo) {
             if (!in_array($key, [1])) return true;
-            $info_cartoes_1_tempo = $this->info_cartoes_static($dados_cartoes, $info_jogo['time_casa'], $info_jogo['time_visitante']);
+            $info_cartoes_1_tempo = $this->info_cartoes_static($dados_cartoes, $info_jogo['equipa_casa'], $info_jogo['equipa_visitante']);
         });
 
         $info_cartoes_2_tempo = $this->get_string_to_pattern(collect($dados_otmizados)->first(), self::PATTERN_INFO_CARTOES_2_TEMPO, true);
 
         $info_cartoes_2_tempo->map(function ($dados_cartoes, $key) use (&$info_cartoes_2_tempo, $info_jogo) {
             if (!in_array($key, [0])) return true;
-            $info_cartoes_2_tempo = $this->info_cartoes_static($dados_cartoes, $info_jogo['time_casa'], $info_jogo['time_visitante']);
+            $info_cartoes_2_tempo = $this->info_cartoes_static($dados_cartoes, $info_jogo['equipa_casa'], $info_jogo['equipa_visitante']);
         });
 
         $info_cartoes = [];
@@ -73,7 +73,7 @@ class EstatisticasJogosBrasileirao extends UtilsAbstract
         $provider_id = (int) collect(explode("'", $provider_id))->first();
 
         $estatisticas = file_get_contents("{$url_json}{$provider_id}");
-        $estatisticas = $this->estatisticas_static($estatisticas, $info_jogo['time_casa']);
+        $estatisticas = $this->estatisticas_static($estatisticas, $info_jogo['equipa_casa']);
 
         $data = $data->merge($estatisticas);
 

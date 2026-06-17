@@ -73,7 +73,7 @@ class ApiBrasileiraoController extends Controller
     }
 
     /**
-     * Retorna jogos da temporada do campeonato brasileiro por time.
+     * Retorna jogos da temporada do campeonato brasileiro por equipa.
      *
      * @param String $nome_time
      *
