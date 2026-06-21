@@ -14,67 +14,23 @@ class ChampionshipSeeder extends Seeder
      */
     public function run()
     {
-        Championship::firstOrCreate([
-            'slug' => 'brasileirao'
-        ], [
-            'name' => 'Campeonato Brasileiro Série A',
-            'type' => 'points'
-        ]);
+        $championships = [
+            ['slug' => 'brasileirao',      'name' => 'Campeonato Brasileiro Série A',  'type' => 'points',  'country' => 'Brasil'],
+            ['slug' => 'libertadores',     'name' => 'Copa Libertadores',               'type' => 'mixed',   'country' => 'América do Sul'],
+            ['slug' => 'champions-league', 'name' => 'UEFA Champions League',           'type' => 'mixed',   'country' => 'Europa'],
+            ['slug' => 'world-cup',        'name' => 'Copa do Mundo FIFA',              'type' => 'mixed',   'country' => 'Mundial'],
+            ['slug' => 'premier-league',   'name' => 'Premier League',                  'type' => 'points',  'country' => 'Inglaterra'],
+            ['slug' => 'la-liga',          'name' => 'La Liga',                         'type' => 'points',  'country' => 'Espanha'],
+            ['slug' => 'serie-a-italy',    'name' => 'Serie A (Itália)',                'type' => 'points',  'country' => 'Itália'],
+            ['slug' => 'bundesliga',       'name' => 'Bundesliga',                      'type' => 'points',  'country' => 'Alemanha'],
+            ['slug' => 'club-world-cup',   'name' => 'Mundial de Clubes FIFA',          'type' => 'mixed',   'country' => 'Mundial'],
+        ];
 
-        Championship::firstOrCreate([
-            'slug' => 'libertadores'
-        ], [
-            'name' => 'Copa Libertadores',
-            'type' => 'mixed'
-        ]);
-        
-        Championship::firstOrCreate([
-            'slug' => 'champions-league'
-        ], [
-            'name' => 'UEFA Champions League',
-            'type' => 'mixed'
-        ]);
-
-        Championship::firstOrCreate([
-            'slug' => 'world-cup'
-        ], [
-            'name' => 'Copa do Mundo FIFA',
-            'type' => 'mixed'
-        ]);
-
-        Championship::firstOrCreate([
-            'slug' => 'premier-league'
-        ], [
-            'name' => 'Premier League (Inglaterra)',
-            'type' => 'points'
-        ]);
-
-        Championship::firstOrCreate([
-            'slug' => 'la-liga'
-        ], [
-            'name' => 'La Liga (Espanha)',
-            'type' => 'points'
-        ]);
-
-        Championship::firstOrCreate([
-            'slug' => 'serie-a-italy'
-        ], [
-            'name' => 'Serie A (Itália)',
-            'type' => 'points'
-        ]);
-
-        Championship::firstOrCreate([
-            'slug' => 'bundesliga'
-        ], [
-            'name' => 'Bundesliga (Alemanha)',
-            'type' => 'points'
-        ]);
-
-        Championship::firstOrCreate([
-            'slug' => 'club-world-cup'
-        ], [
-            'name' => 'Mundial de Clubes FIFA',
-            'type' => 'mixed'
-        ]);
+        foreach ($championships as $data) {
+            Championship::updateOrCreate(
+                ['slug' => $data['slug']],
+                $data
+            );
+        }
     }
 }

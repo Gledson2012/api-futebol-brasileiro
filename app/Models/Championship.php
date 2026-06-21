@@ -9,7 +9,7 @@ class Championship extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'type'];
+    protected $fillable = ['name', 'slug', 'type', 'country'];
 
     public function editions()
     {
