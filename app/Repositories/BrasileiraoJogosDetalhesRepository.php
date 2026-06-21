@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Models\BrasileiraoJogos;
 use App\Models\BrasileiraoJogosDetalhes;
 use App\Repositories\Contracts\BrasileiraoJogosDetalhesRepositoryInterface;
 use Carbon\Carbon;

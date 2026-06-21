@@ -82,6 +82,53 @@ class GenericEspnScraper extends BaseScraper implements ScraperInterface
         return $standings;
     }
 
-    public function getMatches(string $url): array { return []; }
+    public function getMatches(string $url): array
+    {
+        $response = $this->client->get($url, ['query' => ['dates' => date('Y-m-d')]]);
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE || !isset($data['events'])) {
+            return [];
+        }
+
+        $matches = [];
+        foreach ($data['events'] as $event) {
+            $competition = $event['competitions'][0] ?? null;
+            if (!$competition) continue;
+
+            $home = collect($competition['competitors'])->firstWhere('homeAway', 'home');
+            $away = collect($competition['competitors'])->firstWhere('homeAway', 'away');
+            if (!$home || !$away) continue;
+
+            $status = $competition['status']['type'] ?? [];
+            $venue = $competition['venue'] ?? [];
+
+            $homeScore = $home['score'] !== '' ? (int) $home['score'] : null;
+            $awayScore = $away['score'] !== '' ? (int) $away['score'] : null;
+
+            $matches[] = [
+                'home_team' => $home['team']['displayName'] ?? $home['team']['name'] ?? '',
+                'home_team_short' => $home['team']['abbreviation'] ?? '',
+                'home_logo' => $home['team']['logo'] ?? '',
+                'home_score' => $homeScore,
+                'away_team' => $away['team']['displayName'] ?? $away['team']['name'] ?? '',
+                'away_team_short' => $away['team']['abbreviation'] ?? '',
+                'away_logo' => $away['team']['logo'] ?? '',
+                'away_score' => $awayScore,
+                'match_date' => $event['date'] ?? $competition['date'] ?? null,
+                'status' => $status['state'] ?? 'pre',
+                'status_detail' => $status['detail'] ?? $status['description'] ?? '',
+                'completed' => $status['completed'] ?? false,
+                'round_name' => $competition['altGameNote'] ?? null,
+                'venue' => $venue['fullName'] ?? $venue['address']['city'] ?? '',
+                'city' => $venue['address']['city'] ?? '',
+                'country' => $venue['address']['country'] ?? '',
+                'external_id' => $event['id'],
+            ];
+        }
+
+        return $matches;
+    }
+
     public function getMatchDetails(string $url): array { return []; }
 }

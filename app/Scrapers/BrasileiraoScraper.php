@@ -103,22 +103,22 @@ class BrasileiraoScraper extends BaseScraper implements ScraperInterface
 
     private function parseTeam(string $info_time): array
     {
-        $dados_equipa    = explode('"', $info_time);
+        $dados_equipa  = explode('"', $info_time);
         $array_replace = [">", "<", "/", "tr", "td", "class", "=", " ", "title", '"'];
 
         $data = [
-            "external_id"    => $dados_time[1],
-            "position"       => (int) str_replace($array_replace, "", $dados_time[8]),
-            "logo_url"       => trim($dados_time[23]),
-            "team_name"      => trim($dados_time[29]),
-            "points"         => (int) str_replace($array_replace, "", $dados_time[38]),
-            "played"         => (int) str_replace($array_replace, "", $dados_time[40]),
-            "won"            => (int) str_replace($array_replace, "", $dados_time[42]),
-            "drawn"          => (int) str_replace($array_replace, "", $dados_time[44]),
-            "lost"           => (int) str_replace($array_replace, "", $dados_time[46]),
-            "goals_for"      => (int) str_replace($array_replace, "", $dados_time[48]),
-            "goals_against"  => (int) str_replace($array_replace, "", $dados_time[50]),
-            "goals_diff"     => (int) str_replace($array_replace, "", $dados_time[52])
+            "external_id"    => $dados_equipa[1],
+            "position"       => (int) str_replace($array_replace, "", $dados_equipa[8]),
+            "logo_url"       => trim($dados_equipa[23]),
+            "team_name"      => trim($dados_equipa[29]),
+            "points"         => (int) str_replace($array_replace, "", $dados_equipa[38]),
+            "played"         => (int) str_replace($array_replace, "", $dados_equipa[40]),
+            "won"            => (int) str_replace($array_replace, "", $dados_equipa[42]),
+            "drawn"          => (int) str_replace($array_replace, "", $dados_equipa[44]),
+            "lost"           => (int) str_replace($array_replace, "", $dados_equipa[46]),
+            "goals_for"      => (int) str_replace($array_replace, "", $dados_equipa[48]),
+            "goals_against"  => (int) str_replace($array_replace, "", $dados_equipa[50]),
+            "goals_diff"     => (int) str_replace($array_replace, "", $dados_equipa[52])
         ];
 
         return array_map("html_entity_decode", $data);

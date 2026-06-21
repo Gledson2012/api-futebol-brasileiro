@@ -78,12 +78,12 @@ class BrasileiraoJogosRepository implements BrasileiraoJogosRepositoryInterface
             ->where("temporada", $temporada)
             ->orderBy("rodada")
             ->get()
-            ->map(function($dados) use ($nome_time) {
-                $dados->jogos = collect(json_decode($dados->jogos));
-                $dados->jogos = $dados->jogos->where("equipa_casa", $nome_time)->first() ?? $dados->jogos->where("equipa_visitante", $nome_time)->first();
-                $dados->jogos = json_encode($dados->jogos);
-
-                return $dados;
-            });
+            ->filter(function($dados) use ($nome_time) {
+                $jogos = collect(json_decode($dados->jogos));
+                $jogo = $jogos->where("equipa_casa", $nome_time)->first() ?? $jogos->where("equipa_visitante", $nome_time)->first();
+                $dados->jogos = json_encode($jogo);
+                return !is_null($jogo);
+            })
+            ->values();
     }
 }

@@ -42,14 +42,49 @@ class ChampionshipController extends Controller
         try {
             $year = $request->input('year', date('Y'));
             
-            // Mapeia o slug para a variável de ambiente correspondente
-            $envVar = 'URL_' . strtoupper(str_replace('-', '_', $slug));
-            $url = $request->input('url', env($envVar, env('URL_SITE_BRASILEIRAO'))); 
+            $urls = config('scrapers.urls', []);
+            $url = $request->input('url', $urls[$slug] ?? env('URL_SITE_BRASILEIRAO'));
+
+            if (!$url) {
+                return ReturnResponse::warning("URL não configurada para o campeonato: {$slug}. Defina a URL no request ou no config/scrapers.php.");
+            }
 
             $this->service->updateStandings($slug, $year, $url);
             return ReturnResponse::success("Dados de {$slug} atualizados com sucesso.");
         } catch (Exception $e) {
             return ReturnResponse::error("Erro ao atualizar dados.", [$e->getMessage()]);
+        }
+    }
+
+    public function matches(Request $request, string $slug)
+    {
+        try {
+            $year = $request->input('year', date('Y'));
+            $filters = $request->only(['team', 'round', 'status']);
+
+            $matches = $this->service->getMatches($slug, $year, $filters);
+            return ReturnResponse::success("Partidas retornadas com sucesso.", $matches);
+        } catch (Exception $e) {
+            return ReturnResponse::error("Erro ao retornar partidas.", [$e->getMessage()]);
+        }
+    }
+
+    public function updateMatches(Request $request, string $slug)
+    {
+        try {
+            $year = $request->input('year', date('Y'));
+
+            $apiUrls = config('scrapers.api_urls', []);
+            $url = $request->input('url', $apiUrls[$slug] ?? null);
+
+            if (!$url) {
+                return ReturnResponse::warning("URL da API não configurada para o campeonato: {$slug}. Defina a URL no request ou no config/scrapers.php.");
+            }
+
+            $count = $this->service->updateMatches($slug, $year, $url);
+            return ReturnResponse::success("{$count} partidas de {$slug} atualizadas com sucesso.");
+        } catch (Exception $e) {
+            return ReturnResponse::error("Erro ao atualizar partidas.", [$e->getMessage()]);
         }
     }
 }

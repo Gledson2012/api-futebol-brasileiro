@@ -21,13 +21,14 @@ Route::prefix("v2")->group(function () {
     Route::prefix("championships")->group(function () {
         Route::get("/", [ChampionshipController::class, 'index']);
         Route::get("{slug}/standings/{year}", [ChampionshipController::class, 'standings']);
+        Route::get("{slug}/matches", [ChampionshipController::class, 'matches']);
         Route::post("{slug}/update", [ChampionshipController::class, 'update']);
-        // Future: matches, details, etc.
+        Route::post("{slug}/update-matches", [ChampionshipController::class, 'updateMatches']);
     });
 });
 
-// API v1 - Legacy Brasileirao
-Route::namespace("v1")->prefix("campeonato")->group(function () {
+// API v1 - Legacy Brasileirao (DEPRECATED - use /api/v2/championships)
+Route::namespace("v1")->prefix("campeonato")->middleware("deprecated")->group(function () {
     Route::namespace("brasileirao")->prefix("brasileiro")->group(function () {
         Route::prefix("tabela")->group(function () {
             Route::get("/", [ApiBrasileiraoController::class, 'tabela']);
