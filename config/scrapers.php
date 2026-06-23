@@ -14,14 +14,14 @@ return [
 
     'urls' => [
         'brasileirao' => env('URL_BRASILEIRAO', env('URL_SITE_BRASILEIRAO')),
-        'premier-league' => env('URL_PREMIER_LEAGUE', 'https://www.espn.com.br/futebol/tabela/_/liga/ENG.1'),
-        'champions-league' => env('URL_CHAMPIONS_LEAGUE', 'https://www.espn.com.br/futebol/tabela/_/liga/UEFA.CHAMPIONS'),
-        'world-cup' => env('URL_WORLD_CUP', 'https://www.espn.com.br/futebol/tabela/_/liga/FIFA.WORLD'),
-        'la-liga' => env('URL_LA_LIGA', 'https://www.espn.com.br/futebol/tabela/_/liga/ESP.1'),
-        'serie-a-italy' => env('URL_SERIE_A_ITALY', 'https://www.espn.com.br/futebol/tabela/_/liga/ITA.1'),
-        'bundesliga' => env('URL_BUNDESLIGA', 'https://www.espn.com.br/futebol/tabela/_/liga/GER.1'),
-        'club-world-cup' => env('URL_CLUB_WORLD_CUP', 'https://www.espn.com.br/futebol/tabela/_/liga/FIFA.CLUB.WORLD'),
-        'libertadores' => env('URL_LIBERTADORES', 'https://www.espn.com.br/futebol/tabela/_/liga/CONMEBOL.LIBERTADORES'),
+        'premier-league' => env('URL_PREMIER_LEAGUE', 'https://www.espn.com.br/futebol/classificacao/_/liga/ENG.1'),
+        'champions-league' => env('URL_CHAMPIONS_LEAGUE', 'https://www.espn.com.br/futebol/classificacao/_/liga/UEFA.CHAMPIONS'),
+        'world-cup' => env('URL_WORLD_CUP', 'https://www.espn.com.br/futebol/classificacao/_/liga/FIFA.WORLD'),
+        'la-liga' => env('URL_LA_LIGA', 'https://www.espn.com.br/futebol/classificacao/_/liga/ESP.1'),
+        'serie-a-italy' => env('URL_SERIE_A_ITALY', 'https://www.espn.com.br/futebol/classificacao/_/liga/ITA.1'),
+        'bundesliga' => env('URL_BUNDESLIGA', 'https://www.espn.com.br/futebol/classificacao/_/liga/GER.1'),
+        'club-world-cup' => env('URL_CLUB_WORLD_CUP', 'https://www.espn.com.br/futebol/classificacao/_/liga/FIFA.CLUB.WORLD'),
+        'libertadores' => env('URL_LIBERTADORES', 'https://www.espn.com.br/futebol/classificacao/_/liga/CONMEBOL.LIBERTADORES'),
     ],
 
     /*

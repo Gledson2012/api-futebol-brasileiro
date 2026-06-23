@@ -29,6 +29,16 @@ class Kernel extends ConsoleKernel
         $schedule->command("salva-detalhes:jogos-brasileirao")
             ->daily()
             ->runInBackground();
+
+        /** Daily update: placares de hoje + jogos de amanhã (ESPN). */
+        $schedule->command("espn:daily-update")
+            ->dailyAt('00:05')
+            ->runInBackground();
+
+        /** Atualiza placares a cada 30 min durante o dia (6h-23h). */
+        $schedule->command("espn:update-scores")
+            ->cron('*/30 6-23 * * *')
+            ->runInBackground();
     }
 
     /**

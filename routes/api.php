@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\v1\Brasileirao\ApiBrasileiraoController;
 use App\Http\Controllers\Api\v2\ChampionshipController;
+use App\Http\Controllers\Api\v2\LiveMatchesController;
+use App\Http\Controllers\Api\v2\ScoreRefreshController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,12 +20,15 @@ use Illuminate\Support\Facades\Route;
 
 // API v2 - Generic Architecture
 Route::prefix("v2")->group(function () {
+    Route::get("live-matches", [LiveMatchesController::class, 'index']);
+    Route::post("scores/refresh", [ScoreRefreshController::class, 'refresh'])->middleware('api.token');
+
     Route::prefix("championships")->group(function () {
         Route::get("/", [ChampionshipController::class, 'index']);
         Route::get("{slug}/standings/{year}", [ChampionshipController::class, 'standings']);
         Route::get("{slug}/matches", [ChampionshipController::class, 'matches']);
-        Route::post("{slug}/update", [ChampionshipController::class, 'update']);
-        Route::post("{slug}/update-matches", [ChampionshipController::class, 'updateMatches']);
+        Route::post("{slug}/update", [ChampionshipController::class, 'update'])->middleware('api.token');
+        Route::post("{slug}/update-matches", [ChampionshipController::class, 'updateMatches'])->middleware('api.token');
     });
 });
 

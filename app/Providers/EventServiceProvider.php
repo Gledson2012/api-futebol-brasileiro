@@ -27,6 +27,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        \App\Models\Standing::observe(\App\Observers\StandingObserver::class);
+        \App\Models\Game::observe(\App\Observers\GameObserver::class);
     }
 }

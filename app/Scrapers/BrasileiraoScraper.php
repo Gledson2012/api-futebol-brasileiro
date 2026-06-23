@@ -5,7 +5,7 @@ namespace App\Scrapers;
 use App\Scrapers\Contracts\ScraperInterface;
 use Illuminate\Support\Collection;
 
-class BrasileiraoScraper extends BaseScraper implements ScraperInterface
+class BrasileiraoScraper extends GenericEspnScraper implements ScraperInterface
 {
     /** @var String Pattern para buscar a Tabela */
     const PATTERN_TABELA = '/\<!-- MOD 603 - STANDINGS ROUND ROBIN -->(.*?)<!-- END OF MOD 603 - STANDINGS ROUND ROBIN -->/s';
@@ -35,47 +35,6 @@ class BrasileiraoScraper extends BaseScraper implements ScraperInterface
         }
 
         return $tabela;
-    }
-
-    public function getMatches(string $url): array
-    {
-        $html = $this->getHtml($url);
-        
-        // Se for a URL do JSON do Musa API (Terra), decodificamos direto.
-        $json = json_decode($html, true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            $jogos_processados = [];
-            $partidas = $json['root']['result']['standings'][0]['teams'] ?? []; // Exemplo de estrutura
-            // ... processamento de JSON omitido para brevidade
-            return $json; 
-        }
-
-        // Scraping HTML (Similar ao JogosBrasileirao.php original)
-        preg_match_all(self::PATTERN_JOGOS_CONTAINER, $html, $matches);
-        $dados_otmizados = mb_convert_encoding($matches, "HTML-ENTITIES", "UTF-8")[1];
-        $fragmento_jogos = $dados_otmizados[0] ?? '';
-
-        $jogos_rodadas = [];
-        foreach (explode(self::PATTERN_JOGOS, $fragmento_jogos) as $key => $dados) {
-            if ($key === 0) continue;
-
-            $rodada_raw = explode(" ", trim(strip_tags($dados)));
-            $rodada = (int) str_replace("&ordf;", "", $rodada_raw[0]);
-
-            if ($rodada > 0 && $rodada <= 38) {
-                preg_match_all(self::PATTERN_JOGO, $dados, $partida_matches);
-                $partidas = [];
-                foreach ($partida_matches[1] as $partida_html) {
-                    $partidas[] = $this->parseMatch($partida_html, $rodada);
-                }
-                $jogos_rodadas[] = [
-                    "rodada" => $rodada,
-                    "partidas" => $partidas
-                ];
-            }
-        }
-
-        return $jogos_rodadas;
     }
 
     public function getMatchDetails(string $url): array

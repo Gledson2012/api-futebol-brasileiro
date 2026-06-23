@@ -10,44 +10,64 @@ class GenericEspnScraper extends BaseScraper implements ScraperInterface
     {
         $html = $this->getHtml($url);
 
-        // A ESPN divide a tabela em duas: nomes das equipas (esquerda) e as estatísticas (direita).
-        // Capturamos os blocos de cada tabela.
-        preg_match('/<div class="Table__Scroller">(.*?)<\/div>/s', $html, $stats_table_match);
-        preg_match('/<div class="Table__Title">(.*?)<\/div>/s', $html, $names_table_match);
+        $dom = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="UTF-8">' . $html);
+        libxml_clear_errors();
+
+        $xpath = new \DOMXPath($dom);
+
+        // Seleciona os links dentro dos spans com a classe 'hide-mobile' (nomes dos times)
+        $nameNodes = $xpath->query('//span[contains(@class, "hide-mobile")]//a');
         
-        // Se não encontrar os blocos, tenta a abordagem anterior (mais genérica)
-        if (empty($stats_table_match) || empty($names_table_match)) {
+        // Seleciona todas as linhas (tr) da tabela de estatísticas
+        $statsRows = $xpath->query('//div[contains(@class, "Table__Scroller")]//tr');
+
+        $teamNames = [];
+        foreach ($nameNodes as $node) {
+            $teamNames[] = trim($node->textContent);
+        }
+
+        $teamCount = count($teamNames);
+
+        if ($teamCount === 0 || $statsRows->length === 0) {
             return $this->fallbackScraping($html);
         }
 
-        // Nomes das equipas
-        preg_match_all('/<span class="hide-mobile"><a[^>]*>(.*?)<\/a><\/span>/s', $names_table_match[1], $names);
-        
-        // Linhas de estatísticas
-        preg_match_all('/<tr[^>]*>(.*?)<\/tr>/s', $stats_table_match[1], $rows);
-
         $standings = [];
-        $team_count = count($names[1]);
-        
-        // Ignora a primeira linha se for o cabeçalho
-        $row_offset = (count($rows[1]) > $team_count) ? 1 : 0;
+        $rowOffset = 0;
 
-        for ($i = 0; $i < $team_count; $i++) {
-            $row_content = $rows[1][$i + $row_offset] ?? '';
-            preg_match_all('/<span class="static-value">(.*?)<\/span>/s', $row_content, $stats);
+        // Ignora o cabeçalho se houver mais linhas de estatísticas do que times
+        if ($statsRows->length > $teamCount) {
+            $firstRowSpans = $xpath->query('.//span[contains(@class, "static-value")]', $statsRows->item(0));
+            if ($firstRowSpans->length === 0) {
+                $rowOffset = 1;
+            }
+        }
+
+        for ($i = 0; $i < $teamCount; $i++) {
+            $rowNode = $statsRows->item($i + $rowOffset);
+            if (!$rowNode) continue;
+
+            $spanNodes = $xpath->query('.//span[contains(@class, "static-value")]', $rowNode);
             
+            $stats = [];
+            foreach ($spanNodes as $span) {
+                $stats[] = trim($span->textContent);
+            }
+
             $standings[] = [
-                "team_name" => strip_tags($names[1][$i]),
+                "team_name" => $teamNames[$i],
                 "position" => $i + 1,
                 "logo_url" => "",
-                "played" => (int)($stats[1][0] ?? 0),
-                "won" => (int)($stats[1][1] ?? 0),
-                "drawn" => (int)($stats[1][2] ?? 0),
-                "lost" => (int)($stats[1][3] ?? 0),
-                "goals_for" => (int)($stats[1][4] ?? 0),
-                "goals_against" => (int)($stats[1][5] ?? 0),
-                "goals_diff" => (int)($stats[1][6] ?? 0),
-                "points" => (int)($stats[1][7] ?? 0),
+                "played" => (int)($stats[0] ?? 0),
+                "won" => (int)($stats[1] ?? 0),
+                "drawn" => (int)($stats[2] ?? 0),
+                "lost" => (int)($stats[3] ?? 0),
+                "goals_for" => (int)($stats[4] ?? 0),
+                "goals_against" => (int)($stats[5] ?? 0),
+                "goals_diff" => (int)($stats[6] ?? 0),
+                "points" => (int)($stats[7] ?? 0),
             ];
         }
 
@@ -84,7 +104,7 @@ class GenericEspnScraper extends BaseScraper implements ScraperInterface
 
     public function getMatches(string $url): array
     {
-        $response = $this->client->get($url, ['query' => ['dates' => date('Y-m-d')]]);
+        $response = $this->client->get($url, ['query' => ['dates' => date('Ymd')]]);
         $data = json_decode($response->getBody()->getContents(), true);
 
         if (json_last_error() !== JSON_ERROR_NONE || !isset($data['events'])) {

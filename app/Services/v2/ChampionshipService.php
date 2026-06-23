@@ -18,17 +18,21 @@ class ChampionshipService
 
     public function getStandings(string $slug, int $year)
     {
-        $championship = $this->repository->findBySlug($slug);
-        if (!$championship) {
-            throw new Exception("Championship not found.");
-        }
+        $cacheKey = "championship_standings:{$slug}:{$year}";
 
-        $edition = ChampionshipEdition::firstOrCreate([
-            'championship_id' => $championship->id,
-            'year' => $year
-        ]);
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(1), function () use ($slug, $year) {
+            $championship = $this->repository->findBySlug($slug);
+            if (!$championship) {
+                throw new Exception("Championship not found.");
+            }
 
-        return $this->repository->getStandings($edition->id);
+            $edition = ChampionshipEdition::firstOrCreate([
+                'championship_id' => $championship->id,
+                'year' => $year
+            ]);
+
+            return $this->repository->getStandings($edition->id);
+        });
     }
 
     public function updateStandings(string $slug, int $year, string $url)
@@ -63,7 +67,17 @@ class ChampionshipService
             'year' => $year
         ]);
 
-        return $this->repository->getMatches($edition->id, $filters);
+        $versionKey = "championship_matches_version:{$edition->id}";
+        $version = \Illuminate\Support\Facades\Cache::rememberForever($versionKey, function () {
+            return 1;
+        });
+
+        $filtersHash = md5(json_encode($filters));
+        $cacheKey = "championship_matches:{$slug}:{$year}:v{$version}:{$filtersHash}";
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(1), function () use ($edition, $filters) {
+            return $this->repository->getMatches($edition->id, $filters);
+        });
     }
 
     public function updateMatches(string $slug, int $year, string $url)
