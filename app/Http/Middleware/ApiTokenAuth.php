@@ -11,8 +11,9 @@ class ApiTokenAuth
     public function handle(Request $request, Closure $next): Response
     {
         $token = $request->bearerToken();
+        $expectedToken = config('api.update_token', env('API_UPDATE_TOKEN'));
 
-        if (!$token || $token !== config('api.update_token', env('API_UPDATE_TOKEN'))) {
+        if (!$token || !hash_equals($expectedToken, $token)) {
             return response()->json([
                 'code' => 401,
                 'message' => 'Unauthorized. Provide a valid Bearer token.',

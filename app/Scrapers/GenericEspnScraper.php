@@ -111,8 +111,13 @@ class GenericEspnScraper extends BaseScraper implements ScraperInterface
             return [];
         }
 
+        return self::parseEspnEvents($data['events']);
+    }
+
+    public static function parseEspnEvents(array $events): array
+    {
         $matches = [];
-        foreach ($data['events'] as $event) {
+        foreach ($events as $event) {
             $competition = $event['competitions'][0] ?? null;
             if (!$competition) continue;
 
@@ -148,6 +153,48 @@ class GenericEspnScraper extends BaseScraper implements ScraperInterface
         }
 
         return $matches;
+    }
+
+    public static function parseLiveMatches(array $events): array
+    {
+        $liveMatches = [];
+        foreach ($events as $event) {
+            $competition = $event['competitions'][0] ?? null;
+            if (!$competition) continue;
+
+            $statusType = $competition['status']['type'] ?? [];
+            $state = $statusType['state'] ?? '';
+
+            if ($state !== 'in') continue;
+
+            $home = collect($competition['competitors'])->firstWhere('homeAway', 'home');
+            $away = collect($competition['competitors'])->firstWhere('homeAway', 'away');
+            if (!$home || !$away) continue;
+
+            $homeScore = $home['score'] !== '' ? (int) $home['score'] : null;
+            $awayScore = $away['score'] !== '' ? (int) $away['score'] : null;
+
+            $liveMatches[] = [
+                'id' => (int) ($event['id'] ?? 0),
+                'home_team' => [
+                    'name' => $home['team']['displayName'] ?? $home['team']['name'] ?? '',
+                    'short_name' => $home['team']['abbreviation'] ?? '',
+                    'logo_url' => $home['team']['logo'] ?? '',
+                ],
+                'away_team' => [
+                    'name' => $away['team']['displayName'] ?? $away['team']['name'] ?? '',
+                    'short_name' => $away['team']['abbreviation'] ?? '',
+                    'logo_url' => $away['team']['logo'] ?? '',
+                ],
+                'home_score' => $homeScore,
+                'away_score' => $awayScore,
+                'match_date' => $event['date'] ?? $competition['date'] ?? '',
+                'status' => 'in_progress',
+                'round_name' => $competition['altGameNote'] ?? null,
+            ];
+        }
+
+        return $liveMatches;
     }
 
     public function getMatchDetails(string $url): array { return []; }

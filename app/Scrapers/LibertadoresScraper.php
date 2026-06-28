@@ -4,22 +4,15 @@ namespace App\Scrapers;
 
 use App\Scrapers\Contracts\ScraperInterface;
 
-class LibertadoresScraper extends BaseScraper implements ScraperInterface
+class LibertadoresScraper extends GenericEspnScraper implements ScraperInterface
 {
     public function getStandings(string $url): array
     {
-        // Implementação específica para Libertadores (ex: site da CONMEBOL ou Terra)
-        // Por enquanto, retorna array vazio ou lógica de exemplo
-        return [];
+        return parent::getStandings($url);
     }
 
     public function getMatches(string $url): array
     {
-        return [];
-    }
-
-    public function getMatchDetails(string $url): array
-    {
-        return [];
+        return parent::getMatches($url);
     }
 }

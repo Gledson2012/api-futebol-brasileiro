@@ -46,17 +46,36 @@ class BrasileiraoScraper extends GenericEspnScraper implements ScraperInterface
     private function parseMatch(string $html, int $rodada): array
     {
         $dados_jogo = explode('"', $html);
-        $jogo_concluido = count($dados_jogo) > 80;
+        $count = count($dados_jogo);
+        $jogo_concluido = $count > 80;
+
+        $safeGet = function (int $idx, string $default = ''): string {
+            return isset($dados_jogo[$idx]) ? trim($dados_jogo[$idx]) : $default;
+        };
+
+        $awayTeamIdx = $jogo_concluido ? 67 : 63;
+        if ($awayTeamIdx >= $count) $awayTeamIdx = $count - 1;
+
+        $homeScoreIdx = 46;
+        $awayScoreIdx = 50;
+        if ($homeScoreIdx >= $count) $homeScoreIdx = $count - 1;
+        if ($awayScoreIdx >= $count) $awayScoreIdx = $count - 1;
+
+        $externalId = null;
+        if ($jogo_concluido && isset($dados_jogo[57])) {
+            $parts = explode("/ao-vivo/", $dados_jogo[57]);
+            $externalId = trim(end($parts));
+        }
 
         return [
             "rodada" => $rodada,
-            "home_team" => trim($dados_jogo[29]),
-            "away_team" => $jogo_concluido ? trim($dados_jogo[67]) : trim($dados_jogo[63]),
-            "home_score" => $jogo_concluido ? (int)$dados_jogo[46] : null,
-            "away_score" => $jogo_concluido ? (int)$dados_jogo[50] : null,
-            "date" => trim($dados_jogo[7]),
-            "stadium" => trim($dados_jogo[15]),
-            "external_id" => $jogo_concluido ? trim(collect(explode("/ao-vivo/", $dados_jogo[57]))->last()) : null
+            "home_team" => $safeGet(29),
+            "away_team" => $safeGet($awayTeamIdx),
+            "home_score" => $jogo_concluido && isset($dados_jogo[$homeScoreIdx]) ? (int)$dados_jogo[$homeScoreIdx] : null,
+            "away_score" => $jogo_concluido && isset($dados_jogo[$awayScoreIdx]) ? (int)$dados_jogo[$awayScoreIdx] : null,
+            "date" => $safeGet(7),
+            "stadium" => $safeGet(15),
+            "external_id" => $externalId
         ];
     }
 
@@ -65,19 +84,28 @@ class BrasileiraoScraper extends GenericEspnScraper implements ScraperInterface
         $dados_equipa  = explode('"', $info_time);
         $array_replace = [">", "<", "/", "tr", "td", "class", "=", " ", "title", '"'];
 
+        $safeGet = function (array $arr, int $idx, string $default = ''): string {
+            return isset($arr[$idx]) ? trim($arr[$idx]) : $default;
+        };
+
+        $safeInt = function (array $arr, int $idx): int {
+            if (!isset($arr[$idx])) return 0;
+            return (int) str_replace($array_replace, "", $arr[$idx]) ?: 0;
+        };
+
         $data = [
-            "external_id"    => $dados_equipa[1],
-            "position"       => (int) str_replace($array_replace, "", $dados_equipa[8]),
-            "logo_url"       => trim($dados_equipa[23]),
-            "team_name"      => trim($dados_equipa[29]),
-            "points"         => (int) str_replace($array_replace, "", $dados_equipa[38]),
-            "played"         => (int) str_replace($array_replace, "", $dados_equipa[40]),
-            "won"            => (int) str_replace($array_replace, "", $dados_equipa[42]),
-            "drawn"          => (int) str_replace($array_replace, "", $dados_equipa[44]),
-            "lost"           => (int) str_replace($array_replace, "", $dados_equipa[46]),
-            "goals_for"      => (int) str_replace($array_replace, "", $dados_equipa[48]),
-            "goals_against"  => (int) str_replace($array_replace, "", $dados_equipa[50]),
-            "goals_diff"     => (int) str_replace($array_replace, "", $dados_equipa[52])
+            "external_id"    => $safeGet($dados_equipa, 1),
+            "position"       => $safeInt($dados_equipa, 8),
+            "logo_url"       => $safeGet($dados_equipa, 23),
+            "team_name"      => $safeGet($dados_equipa, 29),
+            "points"         => $safeInt($dados_equipa, 38),
+            "played"         => $safeInt($dados_equipa, 40),
+            "won"            => $safeInt($dados_equipa, 42),
+            "drawn"          => $safeInt($dados_equipa, 44),
+            "lost"           => $safeInt($dados_equipa, 46),
+            "goals_for"      => $safeInt($dados_equipa, 48),
+            "goals_against"  => $safeInt($dados_equipa, 50),
+            "goals_diff"     => $safeInt($dados_equipa, 52)
         ];
 
         return array_map("html_entity_decode", $data);

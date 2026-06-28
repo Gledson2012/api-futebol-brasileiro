@@ -14,18 +14,6 @@ use Exception;
 
 class ScoreRefreshController extends Controller
 {
-    private array $leagueMap = [
-        'brasileirao'      => 'bra.1',
-        'premier-league'   => 'eng.1',
-        'la-liga'          => 'esp.1',
-        'serie-a-italy'    => 'ita.1',
-        'bundesliga'       => 'ger.1',
-        'champions-league' => 'uefa.champions',
-        'libertadores'     => 'conmebol.libertadores',
-        'world-cup'        => 'fifa.world',
-        'club-world-cup'   => 'fifa.club.world',
-    ];
-
     public function refresh()
     {
         try {
@@ -37,9 +25,10 @@ class ScoreRefreshController extends Controller
             $year = (int) date('Y');
             $championships = Championship::all();
             $totalUpdated = 0;
+            $leagueCodes = config('scrapers.league_codes', []);
 
             foreach ($championships as $championship) {
-                $espnLeague = $this->leagueMap[$championship->slug] ?? null;
+                $espnLeague = $leagueCodes[$championship->slug] ?? null;
                 if (!$espnLeague) continue;
 
                 $edition = ChampionshipEdition::where('championship_id', $championship->id)
@@ -54,6 +43,7 @@ class ScoreRefreshController extends Controller
                     $data = json_decode($response->getBody(), true);
                     $events = $data['events'] ?? [];
                 } catch (Exception $e) {
+                    \Log::warning("Failed to fetch scoreboard for {$championship->slug}: " . $e->getMessage());
                     continue;
                 }
 
@@ -95,7 +85,6 @@ class ScoreRefreshController extends Controller
                     }
                 }
 
-                // Recalculate standings for this edition
                 if ($totalUpdated > 0) {
                     $this->computeStandings($edition);
                 }
@@ -156,8 +145,11 @@ class ScoreRefreshController extends Controller
 
         Standing::where('championship_edition_id', $edition->id)->delete();
 
+        $teamNames = collect($sorted)->pluck('team_name')->toArray();
+        $loadedTeams = Team::whereIn('name', $teamNames)->get()->keyBy('name');
+
         foreach ($sorted as $position => $teamData) {
-            $teamModel = Team::where('name', $teamData['team_name'])->first();
+            $teamModel = $loadedTeams->get($teamData['team_name']);
             if (!$teamModel) continue;
 
             Standing::create([

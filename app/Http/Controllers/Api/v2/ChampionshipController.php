@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api\v2;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\GetMatchesRequest;
+use App\Http\Requests\UpdateChampionshipRequest;
+use App\Http\Requests\UpdateMatchesRequest;
 use App\Services\v2\ChampionshipService;
 use App\Helpers\ReturnResponse;
-use Illuminate\Http\Request;
 use Exception;
 
 class ChampionshipController extends Controller
@@ -29,6 +31,10 @@ class ChampionshipController extends Controller
 
     public function standings(string $slug, int $year)
     {
+        if ($year < 2000 || $year > 2100) {
+            return ReturnResponse::warning("Ano inválido. Use um ano entre 2000 e 2100.");
+        }
+
         try {
             $standings = $this->service->getStandings($slug, $year);
             return ReturnResponse::success("Classificação retornada com sucesso.", $standings);
@@ -37,13 +43,13 @@ class ChampionshipController extends Controller
         }
     }
 
-    public function update(Request $request, string $slug)
+    public function update(UpdateChampionshipRequest $request, string $slug)
     {
         try {
             $year = $request->input('year', date('Y'));
-            
+
             $urls = config('scrapers.urls', []);
-            $url = $request->input('url', $urls[$slug] ?? env('URL_SITE_BRASILEIRAO'));
+            $url = $request->input('url', $urls[$slug] ?? null);
 
             if (!$url) {
                 return ReturnResponse::warning("URL não configurada para o campeonato: {$slug}. Defina a URL no request ou no config/scrapers.php.");
@@ -56,7 +62,7 @@ class ChampionshipController extends Controller
         }
     }
 
-    public function matches(Request $request, string $slug)
+    public function matches(GetMatchesRequest $request, string $slug)
     {
         try {
             $year = $request->input('year', date('Y'));
@@ -69,7 +75,7 @@ class ChampionshipController extends Controller
         }
     }
 
-    public function updateMatches(Request $request, string $slug)
+    public function updateMatches(UpdateMatchesRequest $request, string $slug)
     {
         try {
             $year = $request->input('year', date('Y'));

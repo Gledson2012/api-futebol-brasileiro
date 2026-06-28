@@ -47,4 +47,25 @@ return [
         'libertadores' => 'https://site.api.espn.com/apis/site/v2/sports/soccer/conmebol.libertadores/scoreboard',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | ESPN League Codes
+    |--------------------------------------------------------------------------
+    |
+    | ESPN sport-specific league codes used in API URLs.
+    |
+    */
+
+    'league_codes' => [
+        'brasileirao'      => 'bra.1',
+        'premier-league'   => 'eng.1',
+        'la-liga'          => 'esp.1',
+        'serie-a-italy'    => 'ita.1',
+        'bundesliga'       => 'ger.1',
+        'champions-league' => 'uefa.champions',
+        'libertadores'     => 'conmebol.libertadores',
+        'world-cup'        => 'fifa.world',
+        'club-world-cup'   => 'fifa.club.world',
+    ],
+
 ];

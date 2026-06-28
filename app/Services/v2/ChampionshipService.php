@@ -68,7 +68,7 @@ class ChampionshipService
         ]);
 
         $versionKey = "championship_matches_version:{$edition->id}";
-        $version = \Illuminate\Support\Facades\Cache::rememberForever($versionKey, function () {
+        $version = \Illuminate\Support\Facades\Cache::remember($versionKey, now()->addDays(7), function () {
             return 1;
         });
 
@@ -101,6 +101,15 @@ class ChampionshipService
 
         $this->repository->updateMatches($edition->id, $matchesData);
 
+        $this->incrementMatchesVersion($edition->id);
+
         return count($matchesData);
+    }
+
+    private function incrementMatchesVersion(int $editionId): void
+    {
+        $versionKey = "championship_matches_version:{$editionId}";
+        $currentVersion = \Illuminate\Support\Facades\Cache::get($versionKey, 1);
+        \Illuminate\Support\Facades\Cache::put($versionKey, $currentVersion + 1, now()->addDays(7));
     }
 }
